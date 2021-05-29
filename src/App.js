@@ -1,8 +1,11 @@
-const express = require('express')
-const Logincontroller = require('./controllers/LoginController')
+const express = require('express');
+const swaggerUi = require('swagger-ui-express');
+const swaggerFile = require('./swagger/swagger.json');
+const Logincontroller = require('./controllers/LoginController');
+const AppConstants = require('./enum/AppConstants');
 
 class App {
-    #controllers
+    #controllers;
     iniciar() {
         // configurar o express
         this.#configurarExpress();
@@ -12,7 +15,6 @@ class App {
         this.#iniciarServidor();
     }
 
-
     #configurarExpress = () => {
         //cria a instância do express para gernciar o servidor
         this.express = express();
@@ -20,6 +22,13 @@ class App {
         // regista os middleware para fazer a converção das requisições da API
         this.express.use(express.urlencoded({extended: true}));
         this.express.use(express.json());
+
+        // configura o swagger da aplicação para servir a documentação
+        this.express.use(
+            `${AppConstants.BASE_API_URL}/docs`,
+            swaggerUi.serve,
+            swaggerUi.setup(swaggerFile)
+        );
 
         // registra o middleware para fazer log das requisições
         this.express.use((req, res, next) => {
