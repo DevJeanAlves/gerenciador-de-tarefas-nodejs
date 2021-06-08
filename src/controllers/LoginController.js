@@ -1,4 +1,5 @@
 const HttpController = require('./HttpController')
+const LoginService = require('../services/LoginService')
 
 class Logincontroller extends HttpController {
     // sobrescreve o método da classe HttpController  
@@ -14,7 +15,7 @@ class Logincontroller extends HttpController {
 
         // valida se foi passado no body os campos de login e senha
         if(!body || !body.login || !body.senha) {
-
+            req.logger.info('requisição de login invalida')
             // retorna um erro para quem chamou a api, falando que os parâmetros estão inválidos
             return res.status(400).json({
                 status: 400,
@@ -22,10 +23,12 @@ class Logincontroller extends HttpController {
             })
         }
 
+        const service = new LoginService();
+        const resultado = service.logar(body.login, body.senha);
+
+        req.logger.info('requisição de login realizada com sucesso', `resultado = ${JSON.stringify(resultado)}`)
         // devolve a resposta mockada do login em formato json
-        res.json({
-            token: 'token gerado pela api'
-        });
+        res.json(resultado);
     }
 
 }
