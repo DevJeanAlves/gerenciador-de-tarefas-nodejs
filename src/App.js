@@ -4,6 +4,7 @@ const swaggerFile = require('./swagger/swagger.json');
 const Logincontroller = require('./controllers/LoginController');
 const UsuarioController = require('./controllers/UsuarioController');
 const AppConstants = require('./enum/AppConstants');
+const MongoDBConectionHelper = require('./helpers/MongoDBConectionHelper');
 
 const logger = require('./middlewares/logger');
 const jwt = require('./middlewares/jwt');
@@ -13,6 +14,8 @@ class App {
     iniciar() {
         // configurar o express
         this.#configurarExpress();
+        // configurar conexão com o banco de dados
+        this.#configurarBancoDeDados();
         // carregar controllers
         this.#carregarControllers();
         // iniciar servidor
@@ -42,6 +45,10 @@ class App {
 
         
     };
+
+    #configurarBancoDeDados = () => {
+        MongoDBConectionHelper.conectar();
+    }
 
     #carregarControllers = () => {
         // atribui para propriedade #controllers a lista de controllers disponiveis da aplicação
